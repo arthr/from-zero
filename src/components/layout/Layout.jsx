@@ -10,7 +10,7 @@ function Layout() {
             <Navbar />
             <div className="flex flex-1 flex-col md:flex-row p-4 gap-4">
                 {/* Left Sidebar - collapses on mobile */}
-                <aside className="w-full md:w-1/5 lg:w-1/6">
+                <aside className="w-full md:w-1/5 lg:w-1/6 overflow-y-auto max-h-[calc(100vh-6rem)]">
                     <LeftSidebar />
                 </aside>
 
@@ -20,7 +20,7 @@ function Layout() {
                 </main>
 
                 {/* Right Sidebar - collapses on mobile */}
-                <aside className="w-full md:w-1/5 lg:w-1/6">
+                <aside className="w-full md:w-1/5 lg:w-1/6 overflow-y-auto max-h-[calc(100vh-6rem)]">
                     <RightSidebar />
                 </aside>
             </div>
