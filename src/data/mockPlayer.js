@@ -1,0 +1,25 @@
+export const playerData = {
+	id: 1,
+	name: "Player One",
+	level: 42,
+	health: 85,
+	energy: 70,
+	xp: 75,
+	stats: {
+		strength: 42,
+		agility: 68,
+		intelligence: 36,
+		luck: 47,
+	},
+	maxSlots: 16,
+	enabledSlots: 13,
+	inventory: [
+		{ id: 1, name: "Poção", icon: "🧪", quantity: 5 },
+		{ id: 2, name: "Espada", icon: "⚔️", quantity: 1 },
+		{ id: 3, name: "Escudo", icon: "🛡️", quantity: 1 },
+		{ id: 4, name: "Moedas", icon: "💰", quantity: 247 },
+		{ id: 5, name: "Arco", icon: "🏹", quantity: 1 },
+		{ id: 6, name: "Flechas do Cupido", icon: "💘", quantity: 20 },
+		{ id: 7, name: "Elixir", icon: "🍷", quantity: 3 },
+	],
+};
