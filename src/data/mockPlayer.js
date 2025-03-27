@@ -1,6 +1,6 @@
 export const playerData = {
 	id: 1,
-	name: "Player One",
+	name: "chandlerBing",
 	level: 42,
 	health: 85,
 	energy: 70,

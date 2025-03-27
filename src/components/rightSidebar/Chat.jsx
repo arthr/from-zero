@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
+
 import { addMessage } from '../../store/chatSlice';
 
 function Chat() {
+    const player = useSelector((state) => state.player);
     const [message, setMessage] = useState('');
     const messagesContainerRef = useRef(null);
     const dispatch = useDispatch();
@@ -27,7 +30,7 @@ function Chat() {
             // Criar uma nova mensagem com os dados necessários
             const newMessage = {
                 id: Date.now(),
-                sender: 'Player One', // Poderia vir do estado do jogador
+                sender: player.name, // Poderia vir do estado do jogador
                 text: message,
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 isCurrentUser: true
@@ -56,9 +59,7 @@ function Chat() {
                                 : 'bg-neutral-700 text-white rounded-bl-none'
                                 }`}
                         >
-                            {!msg.isCurrentUser && (
-                                <p className="text-xs font-bold text-emerald-400">{msg.sender}</p>
-                            )}
+                            <p className={`text-xs font-bold ${msg.isCurrentUser ? 'text-emerald-900' : 'text-emerald-400'}`}>{!msg.isCurrentUser ? msg.sender : player.name}</p>
                             <p className="text-sm break-words">{msg.text}</p>
                             <p className="text-xs text-right opacity-70">{msg.time}</p>
                         </div>

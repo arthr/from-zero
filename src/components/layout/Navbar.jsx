@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import Avatar from '../ui/Avatar';
 
 function Navbar() {
+    const player = useSelector((state) => state.player);
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
@@ -33,7 +36,7 @@ function Navbar() {
 
                 {/* User Avatar */}
                 <div className="relative">
-                    <Avatar username="Player1" />
+                    <Avatar username={player.name} />
                 </div>
             </div>
 
