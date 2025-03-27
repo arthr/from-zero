@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function Tabs({ tabs }) {
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab, setActiveTab] = useState(1);
 
     return (
         <div className="bg-neutral-800 rounded-lg shadow-md overflow-hidden">
@@ -10,7 +10,7 @@ function Tabs({ tabs }) {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
-                            className={`px-4 py-2 font-medium text-sm ${activeTab === index
+                            className={`flex-grow px-4 py-2 font-medium text-xs ${activeTab === index
                                 ? 'text-emerald-500 border-b-2 border-emerald-500'
                                 : 'text-neutral-400 hover:text-white'
                                 }`}
