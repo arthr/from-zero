@@ -59,6 +59,7 @@ function Navbar() {
                         >
                             {page.icon && <span className="mr-1">{page.icon}</span>}
                             {page.title}
+                            {page.suffixIcon && <span className="ml-1">{page.suffixIcon}</span>}
                         </button>
                     ))}
                 </div>
@@ -80,6 +81,7 @@ function Navbar() {
                         >
                             {page.icon && <span className="mr-2">{page.icon}</span>}
                             {page.title}
+                            {page.suffixIcon && <span className="ml-2">{page.suffixIcon}</span>}
                         </button>
                     ))}
                 </div>

@@ -1,7 +1,10 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 function PageContent({ content }) {
     if (!content) return null;
+
+    const containsHTML = (text) => /<\/?[a-z][\s\S]*>/i.test(text);
 
     return (
         <div className="page-content">
@@ -11,7 +14,17 @@ function PageContent({ content }) {
             {content.sections && content.sections.map((section, index) => (
                 <div key={index} className="mt-4">
                     {section.title && <p className="font-medium">{section.title}</p>}
-                    {section.text && <p className="mt-2">{section.text}</p>}
+                    {section.text && (
+                        containsHTML(section.text) ? (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(section.text),
+                                }}
+                            />
+                        ) : (
+                            <p className="mt-2">{section.text}</p>
+                        )
+                    )}
 
                     {section.type === 'list' && section.items && (
                         <ul className="list-disc ml-5 mt-2">

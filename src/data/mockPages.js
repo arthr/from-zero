@@ -2,14 +2,15 @@ export const pagesData = [
 	{
 		id: "home",
 		title: "Home",
-		icon: "🏠", // Opcional: poderia ser usado para exibir ícones na navegação
+		icon: "💙", // Opcional: Ícone exibido antes título
+		suffixIcon: "🏠", // Opcional: Ícone exibido depois do título
 		order: 1, // Para garantir a ordem correta na navegação
 		content: {
 			title: "Bem-vindo ao GameHub",
 			description: "Esta é a página inicial do nosso projeto de jogo.",
 			sections: [
 				{
-					text: "Explore as diferentes seções usando o menu de navegação.",
+					text: "<strong style='color:red'>NEGRITO</strong> Explore as diferentes seções usando o menu de navegação.",
 				},
 			],
 		},
@@ -18,6 +19,7 @@ export const pagesData = [
 		id: "jogo",
 		title: "O Jogo",
 		icon: "🎮",
+		suffixIcon: "🕹️",
 		order: 2,
 		content: {
 			title: "Sobre o Jogo",
@@ -34,6 +36,7 @@ export const pagesData = [
 		id: "ranking",
 		title: "Ranking",
 		icon: "🏆",
+		suffixIcon: "🥇",
 		order: 3,
 		content: {
 			title: "Ranking de Jogadores",
@@ -54,6 +57,7 @@ export const pagesData = [
 		id: "config",
 		title: "Configurações",
 		icon: "⚙️",
+		suffixIcon: "⚡",
 		order: 4,
 		content: {
 			title: "Configurações",
