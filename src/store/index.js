@@ -19,6 +19,10 @@ export const store = configureStore({
 		notifications: notificationsReducer,
 		pages: pagesReducer,
 	},
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: false,
+		}),
 });
 
 export default store;

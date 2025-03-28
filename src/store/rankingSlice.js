@@ -1,7 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { rankingData } from "../data/mockRanking";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const initialState = rankingData;
+const SERVER_URL = import.meta.env.REACT_APP_SERVER_URL;
+
+export const fetchRanking = createAsyncThunk(
+	"ranking/fetchRanking",
+	async () => {
+		const response = await fetch(`${SERVER_URL}/api/ranking`);
+		return response.json();
+	}
+);
+
+const initialState = await (async () => {
+	const response = await fetch(`${SERVER_URL}/api/ranking`);
+	return response.json();
+})();
 
 export const rankingSlice = createSlice({
 	name: "ranking",
@@ -107,6 +119,11 @@ export const rankingSlice = createSlice({
 			reducer: (state) => state,
 			prepare: (count = 10) => ({ payload: count }),
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(fetchRanking.fulfilled, (state, action) => {
+			return action.payload;
+		});
 	},
 });
 

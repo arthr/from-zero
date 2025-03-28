@@ -1,7 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { activitiesData } from "../data/mockActivities";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const initialState = activitiesData;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+export const fetchActivities = createAsyncThunk(
+	"activities/fetchActivities",
+	async () => {
+		const response = await fetch(`${SERVER_URL}/api/activities`);
+		return response.json();
+	}
+);
+
+const initialState = await (async () => {
+	const response = await fetch(`${SERVER_URL}/api/activities`);
+	return response.json();
+})();
 
 export const activitiesSlice = createSlice({
 	name: "activities",
@@ -47,6 +59,11 @@ export const activitiesSlice = createSlice({
 		clearActivities: () => {
 			return [];
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(fetchActivities.fulfilled, (state, action) => {
+			return action.payload;
+		});
 	},
 });
 

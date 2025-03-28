@@ -1,5 +1,20 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
-import { pagesData } from "../data/mockPages";
+import {
+	createSlice,
+	createSelector,
+	createAsyncThunk,
+} from "@reduxjs/toolkit";
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+export const fetchPages = createAsyncThunk("pages/fetchPages", async () => {
+	const response = await fetch(`${SERVER_URL}/api/pages`);
+	return response.json();
+});
+
+const pagesData = await (async () => {
+	const response = await fetch(`${SERVER_URL}/api/pages`);
+	return response.json();
+})();
 
 const initialState = {
 	pages: pagesData,
@@ -62,6 +77,11 @@ export const pagesSlice = createSlice({
 				Object.assign(page, updates);
 			}
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(fetchPages.fulfilled, (state, action) => {
+			state.pages = action.payload;
+		});
 	},
 });
 

@@ -1,7 +1,32 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { playerData } from "../data/mockPlayer";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import io from "socket.io-client";
+import { store } from "./index";
 
-const initialState = playerData;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+const socket = io(SOCKET_URL);
+
+export const fetchPlayer = createAsyncThunk("player/fetchPlayer", async () => {
+	const response = await fetch(`${SERVER_URL}/api/player`);
+	return response.json();
+});
+
+export const updatePlayer = createAsyncThunk(
+	"player/updatePlayer",
+	async (player) => {
+		const response = await fetch(`${SERVER_URL}/api/player`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(player),
+		});
+		return response.json();
+	}
+);
+
+const initialState = await (async () => {
+	const response = await fetch(`${SERVER_URL}/api/player`);
+	return response.json();
+})();
 
 export const playerSlice = createSlice({
 	name: "player",
@@ -117,6 +142,20 @@ export const playerSlice = createSlice({
 			state.inventory = [];
 		},
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchPlayer.fulfilled, (state, action) => {
+				return { ...state, ...action.payload };
+			})
+			.addCase(updatePlayer.fulfilled, (state, action) => {
+				return { ...state, ...action.payload };
+			});
+	},
+});
+
+// Escute eventos do servidor via socket
+socket.on("playerUpdate", (updatedPlayer) => {
+	store.dispatch(updatePlayer.fulfilled(updatedPlayer));
 });
 
 export const {

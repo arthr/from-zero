@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // Importando do messagesSlice em vez do chatSlice
-import { addMessage } from '../../store/messagesSlice';
+import { sendMessage } from '../../store/messagesSlice';
 
 function Chat() {
     const player = useSelector((state) => state.player);
@@ -36,8 +36,8 @@ function Chat() {
                 isCurrentUser: true
             };
 
-            // Despachar a ação para adicionar a mensagem usando messagesSlice
-            dispatch(addMessage(newMessage));
+            // Despachar a ação para enviar a mensagem via Redux
+            dispatch(sendMessage(newMessage));
             setMessage('');
         }
     };
