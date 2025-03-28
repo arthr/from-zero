@@ -1,35 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import io from "socket.io-client";
+import { apiService } from "../services/apiService";
+import { socketService } from "../services/socketService";
 import { store } from "./index";
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
-const socket = io(SOCKET_URL);
 
 export const fetchNotifications = createAsyncThunk(
 	"notifications/fetchNotifications",
 	async () => {
-		const response = await fetch(`${SERVER_URL}/api/notifications`);
-		return response.json();
+		return apiService.get("/api/notifications");
 	}
 );
 
 export const createNotification = createAsyncThunk(
 	"notifications/createNotification",
 	async (notification) => {
-		const response = await fetch(`${SERVER_URL}/api/notifications`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(notification),
-		});
-		return response.json();
+		return apiService.post("/api/notifications", notification);
 	}
 );
 
-const initialState = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/notifications`);
-	return response.json();
-})();
+const initialState = await apiService.get("/api/notifications");
 
 export const notificationsSlice = createSlice({
 	name: "notifications",
@@ -97,7 +85,7 @@ export const notificationsSlice = createSlice({
 });
 
 // Escute eventos do servidor via socket
-socket.on("newNotification", (notification) => {
+socketService.connect().on("newNotification", (notification) => {
 	store.dispatch(notificationsSlice.actions.addNotification(notification));
 });
 

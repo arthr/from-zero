@@ -3,18 +3,13 @@ import {
 	createSelector,
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+import { apiService } from "../services/apiService";
 
 export const fetchPages = createAsyncThunk("pages/fetchPages", async () => {
-	const response = await fetch(`${SERVER_URL}/api/pages`);
-	return response.json();
+	return apiService.get("/api/pages");
 });
 
-const pagesData = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/pages`);
-	return response.json();
-})();
+const pagesData = await apiService.get("/api/pages");
 
 const initialState = {
 	pages: pagesData,

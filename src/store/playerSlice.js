@@ -1,31 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import io from "socket.io-client";
+import { apiService } from "../services/apiService";
+import { socketService } from "../services/socketService";
 import { store } from "./index";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
-const socket = io(SOCKET_URL);
-
 export const fetchPlayer = createAsyncThunk("player/fetchPlayer", async () => {
-	const response = await fetch(`${SERVER_URL}/api/player`);
-	return response.json();
+	return apiService.get("/api/player");
 });
 
 export const updatePlayer = createAsyncThunk(
 	"player/updatePlayer",
 	async (player) => {
-		const response = await fetch(`${SERVER_URL}/api/player`, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(player),
-		});
-		return response.json();
+		return apiService.put("/api/player", player);
 	}
 );
 
 const initialState = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/player`);
-	return response.json();
+	const response = await apiService.get("/api/player");
+	return response;
 })();
 
 export const playerSlice = createSlice({
@@ -154,7 +145,7 @@ export const playerSlice = createSlice({
 });
 
 // Escute eventos do servidor via socket
-socket.on("playerUpdate", (updatedPlayer) => {
+socketService.connect().on("playerUpdate", (updatedPlayer) => {
 	store.dispatch(updatePlayer.fulfilled(updatedPlayer));
 });
 

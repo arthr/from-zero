@@ -1,15 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import io from "socket.io-client";
+import { apiService } from "../services/apiService";
+import { socketService } from "../services/socketService";
 import { store } from "./index";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
-const socket = io(SOCKET_URL);
 
-const initialState = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/messages`);
-	return response.json();
-})();
+const initialState = await apiService.get("/api/messages");
 
 export const messagesSlice = createSlice({
 	name: "messages",
@@ -60,7 +56,7 @@ export const messagesSlice = createSlice({
 });
 
 // Escute eventos do servidor via socket
-socket.on("newMessage", (message) => {
+socketService.connect().on("newMessage", (message) => {
 	store.dispatch(messagesSlice.actions.addMessage(message));
 });
 
@@ -72,7 +68,7 @@ export const { addMessage, removeMessage, editMessage, clearMessages } =
  * @param {Object} message - Objeto contendo os dados da mensagem
  */
 export const sendMessage = (message) => () => {
-	socket.emit("sendMessage", message);
+	socketService.emit("sendMessage", message);
 };
 
 export default messagesSlice.reducer;

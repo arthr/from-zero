@@ -1,19 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+import { apiService } from "../services/apiService";
 
 export const fetchRanking = createAsyncThunk(
 	"ranking/fetchRanking",
 	async () => {
-		const response = await fetch(`${SERVER_URL}/api/ranking`);
-		return response.json();
+		return apiService.get("/api/ranking");
 	}
 );
 
-const initialState = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/ranking`);
-	return response.json();
-})();
+const initialState = await apiService.get("/api/ranking");
 
 export const rankingSlice = createSlice({
 	name: "ranking",

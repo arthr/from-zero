@@ -1,19 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+import { apiService } from "../services/apiService";
 
 export const fetchActivities = createAsyncThunk(
 	"activities/fetchActivities",
 	async () => {
-		const response = await fetch(`${SERVER_URL}/api/activities`);
-		return response.json();
+		return apiService.get("/api/activities");
 	}
 );
 
-const initialState = await (async () => {
-	const response = await fetch(`${SERVER_URL}/api/activities`);
-	return response.json();
-})();
+const initialState = await apiService.get("/api/activities");
 
 export const activitiesSlice = createSlice({
 	name: "activities",
