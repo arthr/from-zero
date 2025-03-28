@@ -1,27 +1,36 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Stars, Text, OrbitControls } from '@react-three/drei';
+import { Text, OrbitControls } from '@react-three/drei';
 import RotatingBox from './RotatingBox';
 import PulsingSphere from './PulsingSphere';
 import WavyPlane from './WavyPlane';
 import InventoryDisplay from './InventoryDisplay';
+import SpaceIllumination from './SpaceIllumination';
 
 function GameScene({ showInventory }) {
     // Usando o Redux store
-    const uiTheme = useSelector(state => state.ui.theme) || 'dark';
-    const gameStatus = useSelector(state => state.game.status) || 'waiting';
+    const gamePhase = useSelector(state => state.game.gamePhase) || 'waiting';
     const playerName = useSelector(state => state.player.name) || 'Jogador';
+
+    const statusMessages = {
+        dev: 'Modo de Desenvolvimento',
+        active: 'Jogo em Andamento',
+        setup: 'Configurando o Jogo',
+        waiting: 'Aguardando Início',
+        play: 'Jogo em Andamento',
+        end: 'Fim de Jogo',
+    };
 
     return (
         <>
-            <color attach="background" args={[uiTheme === 'dark' ? '#0f172a' : '#f8fafc']} />
-            <fog attach="fog" args={[uiTheme === 'dark' ? '#0f172a' : '#f8fafc', 5, 15]} />
+            <color attach="background" args={['#050A24']} />
+            <fog attach="fog" args={['#050A24', 5, 15]} />
 
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <spotLight position={[0, 5, 0]} angle={0.3} penumbra={1} intensity={1} castShadow />
+            {/* Substituímos as luzes básicas pelo nosso componente de iluminação espacial */}
+            <SpaceIllumination />
 
-            <Stars radius={100} depth={50} count={3000} factor={4} fade />
+            {/* Removemos as Stars porque o SpaceIllumination já inclui partículas de estrelas */}
+            {/* Stars foi removido daqui */}
 
             <WavyPlane position={[0, -1, 0]} />
 
@@ -37,14 +46,14 @@ function GameScene({ showInventory }) {
 
             <Text
                 position={[0, 1.5, 0]}
-                color={uiTheme === 'dark' ? '#ffffff' : '#0f172a'}
+                color="#ffffff"
                 fontSize={0.5}
                 maxWidth={10}
                 lineHeight={1}
                 letterSpacing={0.02}
                 textAlign="center"
             >
-                {gameStatus === 'active' ? 'Jogo em Andamento' : 'Aguardando Início'}
+                {statusMessages[gamePhase] || 'Status Desconhecido'}
             </Text>
 
             <Text

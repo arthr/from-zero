@@ -4,7 +4,14 @@ const initialState = {
 	pieces: [],
 	currentPlayer: 1,
 	turn: 1,
-	gamePhase: "setup", // setup, play, end
+	/**
+	 * dev: 'Modo de Desenvolvimento',
+	 * setup: 'Configurando o Jogo',
+	 * waiting: 'Aguardando para Começar',
+	 * play: 'Jogo em Progresso',
+	 * end: 'Fim de Jogo',
+	 */
+	gamePhase: "dev",
 	selectedPiece: null,
 	winner: null,
 };
