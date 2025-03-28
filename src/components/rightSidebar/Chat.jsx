@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-
-import { addMessage } from '../../store/chatSlice';
+// Importando do messagesSlice em vez do chatSlice
+import { addMessage } from '../../store/messagesSlice';
 
 function Chat() {
     const player = useSelector((state) => state.player);
@@ -10,8 +10,8 @@ function Chat() {
     const messagesContainerRef = useRef(null);
     const dispatch = useDispatch();
 
-    // Usando Redux para acessar as mensagens
-    const messages = useSelector((state) => state.chat.messages);
+    // Usando Redux para acessar as mensagens diretamente do messagesSlice
+    const messages = useSelector((state) => state.messages);
 
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
@@ -36,7 +36,7 @@ function Chat() {
                 isCurrentUser: true
             };
 
-            // Despachar a ação para adicionar a mensagem
+            // Despachar a ação para adicionar a mensagem usando messagesSlice
             dispatch(addMessage(newMessage));
             setMessage('');
         }
