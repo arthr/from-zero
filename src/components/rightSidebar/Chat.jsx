@@ -43,7 +43,7 @@ function Chat() {
     };
 
     return (
-        <div className="flex flex-col h-80">
+        <div className="flex flex-col h-80 -mt-2 border-neutral-900">
             <div
                 ref={messagesContainerRef}
                 className="flex-grow overflow-y-auto mb-3 space-y-3 px-2"

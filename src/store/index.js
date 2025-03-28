@@ -6,6 +6,7 @@ import uiReducer from "./uiSlice";
 import messagesReducer from "./messagesSlice";
 import activitiesReducer from "./activitiesSlice";
 import notificationsReducer from "./notificationsSlice";
+import pagesReducer from "./pagesSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
 		messages: messagesReducer,
 		activities: activitiesReducer,
 		notifications: notificationsReducer,
+		pages: pagesReducer,
 	},
 });
 

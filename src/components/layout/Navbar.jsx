@@ -1,11 +1,34 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    selectOrderedPages,
+    setActivePage,
+    selectActivePageStates
+} from '../../store/pagesSlice';
 import Avatar from '../ui/Avatar';
 
 function Navbar() {
     const player = useSelector((state) => state.player);
     const [menuOpen, setMenuOpen] = useState(false);
+    const dispatch = useDispatch();
+
+    // Obter as páginas do store e ordenar usando o seletor memoizado
+    const pages = useSelector(selectOrderedPages);
+
+    // Obter o estado de todas as páginas ativas usando o seletor memoizado
+    const activePageStates = useSelector(selectActivePageStates);
+
+    const handleNavClick = (pageId) => {
+        dispatch(setActivePage(pageId));
+        if (menuOpen) setMenuOpen(false);
+    };
+
+    // Helper para gerar classes condicionais dos botões
+    const getButtonClasses = (pageId) => {
+        return activePageStates[pageId]
+            ? "text-emerald-400 transition"
+            : "text-white hover:text-emerald-400 transition";
+    };
 
     return (
         <nav className="bg-neutral-800 shadow-md py-3 px-6">
@@ -28,10 +51,16 @@ function Navbar() {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex space-x-8">
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Home</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Jogo</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Ranking</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Configurações</a>
+                    {pages.map(page => (
+                        <button
+                            key={page.id}
+                            onClick={() => handleNavClick(page.id)}
+                            className={getButtonClasses(page.id)}
+                        >
+                            {page.icon && <span className="mr-1">{page.icon}</span>}
+                            {page.title}
+                        </button>
+                    ))}
                 </div>
 
                 {/* User Avatar */}
@@ -43,10 +72,16 @@ function Navbar() {
             {/* Mobile Menu */}
             {menuOpen && (
                 <div className="mt-4 md:hidden flex flex-col space-y-3">
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Home</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Jogo</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Ranking</a>
-                    <a href="#" className="text-white hover:text-emerald-400 transition">Configurações</a>
+                    {pages.map(page => (
+                        <button
+                            key={page.id}
+                            onClick={() => handleNavClick(page.id)}
+                            className={getButtonClasses(page.id) + " -mx-6 border-t pt-2 border-neutral-700"}
+                        >
+                            {page.icon && <span className="mr-2">{page.icon}</span>}
+                            {page.title}
+                        </button>
+                    ))}
                 </div>
             )}
         </nav>
