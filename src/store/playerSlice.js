@@ -39,6 +39,7 @@ const initialState = {
 	inventory: [],
 	error: null,
 	loading: false,
+	updating: false,
 };
 
 export const playerSlice = createSlice({
@@ -162,21 +163,26 @@ export const playerSlice = createSlice({
 				state.error = null;
 			})
 			.addCase(fetchPlayer.fulfilled, (state, action) => {
-				return { ...state, ...action.payload };
+				state.loading = false;
+				Object.assign(state, action.payload);
 			})
 			.addCase(fetchPlayer.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || "Erro ao buscar jogador.";
 			})
 			.addCase(updatePlayer.pending, (state) => {
-				state.loading = true;
+				state.updating = true;
 				state.error = null;
 			})
 			.addCase(updatePlayer.fulfilled, (state, action) => {
-				return { ...state, ...action.payload };
+				// TODO: Talvez trocar para updating faça mais sentido?
+				// Porque o loading é para quando está carregando o primeiro estado
+				//state.updating = false;
+				state.loading = false;
+				Object.assign(state, action.payload);
 			})
 			.addCase(updatePlayer.rejected, (state, action) => {
-				state.loading = false;
+				state.updating = false;
 				state.error = action.payload || "Erro ao atualizar jogador.";
 			});
 	},

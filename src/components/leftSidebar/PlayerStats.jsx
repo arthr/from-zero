@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Card from '../ui/Card';
+import AnimatedCounter from '../ui/AnimatedCounter';
 
 import { fetchPlayer } from '../../store/playerSlice';
-import AnimatedCounter from '../ui/AnimatedCounter';
+
+import { calculateDuration } from '../../utils/animationUtils';
 
 function PlayerStats() {
     const dispatch = useDispatch();
@@ -13,17 +15,10 @@ function PlayerStats() {
 
     const [stats, setStats] = useState([]);
 
-    const calculatedDuration = (value, maxValue) => {
-        const minDuration = 500;
-        const maxDuration = 3000;
-        const duration = Math.min(Math.max((value / maxValue) * 2000, minDuration), maxDuration);
-        return duration;
-    };
-
     useEffect(() => {
         dispatch(fetchPlayer());
     }, [dispatch]);
-    // Atualiza os stats quando o jogador é carregado
+
     useEffect(() => {
         const statsData = [
             { name: 'FOR', value: playerStats.strength },
@@ -34,8 +29,7 @@ function PlayerStats() {
         setStats(statsData);
     }, [playerStats]);
 
-    // Verifica se o jogador está carregando
-    if (!playerLoading) {
+    if (playerLoading) {
         return (
             <Card title="Estatísticas">
                 <div className="animate-pulse grid grid-cols-4 gap-3">
@@ -60,7 +54,7 @@ function PlayerStats() {
                     <div key={index} className="flex flex-col">
                         <span className="text-sm text-neutral-400">{stat.name}</span>
                         <span className="text-lg font-bold">
-                            <AnimatedCounter value={stat.value} duration={calculatedDuration(stat.value, 100)} />
+                            <AnimatedCounter value={stat.value} duration={calculateDuration(stat.value, 100, 500, 3000)} />
                         </span>
                     </div>
                 ))}

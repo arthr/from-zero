@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Card from '../ui/Card';
 import { useSelector } from 'react-redux';
+import AnimatedCounter from '../ui/AnimatedCounter';
+import { calculateStep } from '../../utils/animationUtils';
 
 function Inventory() {
     // Obter os itens do inventário e o número máximo de slots do estado Redux
@@ -28,7 +30,7 @@ function Inventory() {
                     >
                         <span className="text-2xl">{item.icon}</span>
                         <span className="absolute -bottom-2 -right-1 bg-emerald-600/80 text-white text-xs rounded-sm min-w-[20px] px-1 flex items-center justify-center">
-                            {item.quantity}
+                            <AnimatedCounter value={item.quantity} step={calculateStep(item.quantity, item.quantity)} duration={100} />
                         </span>
 
                         {hoveredItem === item.id && (

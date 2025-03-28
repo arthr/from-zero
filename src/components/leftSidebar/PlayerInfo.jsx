@@ -6,6 +6,7 @@ import Avatar from '../ui/Avatar';
 import ProgressBar from '../ui/ProgressBar'; // Importa o novo subcomponente
 
 import { fetchPlayer } from '../../store/playerSlice';
+import AnimatedCounter from '../ui/AnimatedCounter';
 
 function PlayerInfo() {
     const dispatch = useDispatch();
@@ -15,7 +16,8 @@ function PlayerInfo() {
         dispatch(fetchPlayer());
     }, [dispatch]);
 
-    if (!player.loading) {
+    if (player.loading) {
+        //console.log(player);
         return (
             <Card title="Informações do Jogador">
                 <div className="animate-pulse flex items-center mb-4">
@@ -46,7 +48,7 @@ function PlayerInfo() {
                 </div>
                 <div>
                     <h4 className="font-bold text-white">{player.name}</h4>
-                    <p className="text-sm text-neutral-400">Nível {player.level}</p>
+                    <p className="text-sm text-neutral-400">Nível <AnimatedCounter value={player.level} /></p>
                 </div>
             </div>
 
