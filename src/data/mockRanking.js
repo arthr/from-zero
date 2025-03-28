@@ -5,7 +5,7 @@ export const rankingData = [
 	{
 		id: 4,
 		name: "Player One",
-		score: 6540,
+		score: 16540,
 		avatar: null,
 		isCurrentUser: true,
 	},

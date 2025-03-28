@@ -5,9 +5,12 @@ function Ranking() {
     // Usando Redux para acessar os dados do ranking
     const players = useSelector((state) => state.ranking);
 
+    // Ordenando os jogadores pelo score (decrescente - do maior para o menor)
+    const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+
     return (
         <div className="space-y-2">
-            {players.map((player, index) => (
+            {sortedPlayers.map((player, index) => (
                 <div
                     key={player.id}
                     className={`flex items-center text-sm py-2 px-2 rounded ${player.isCurrentUser ? 'bg-neutral-700' : 'hover:bg-neutral-700'
