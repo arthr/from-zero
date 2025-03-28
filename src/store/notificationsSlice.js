@@ -5,8 +5,14 @@ import { store } from "./index";
 
 export const fetchNotifications = createAsyncThunk(
 	"notifications/fetchNotifications",
-	async () => {
-		return apiService.get("/api/notifications");
+	async (_, { rejectWithValue }) => {
+		try {
+			return apiService.get("/api/notifications");
+		} catch (error) {
+			return rejectWithValue(
+				`Error fetching notifications: ${error.message}`
+			);
+		}
 	}
 );
 
@@ -17,7 +23,7 @@ export const createNotification = createAsyncThunk(
 	}
 );
 
-const initialState = await apiService.get("/api/notifications");
+const initialState = [];
 
 export const notificationsSlice = createSlice({
 	name: "notifications",

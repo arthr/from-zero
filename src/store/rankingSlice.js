@@ -3,12 +3,16 @@ import { apiService } from "../services/apiService";
 
 export const fetchRanking = createAsyncThunk(
 	"ranking/fetchRanking",
-	async () => {
-		return apiService.get("/api/ranking");
+	async (_, { rejectWithValue }) => {
+		try {
+			return apiService.get("/api/ranking");
+		} catch (error) {
+			return rejectWithValue(`Error fetching ranking: ${error.message}`);
+		}
 	}
 );
 
-const initialState = await apiService.get("/api/ranking");
+const initialState = [];
 
 export const rankingSlice = createSlice({
 	name: "ranking",

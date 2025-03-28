@@ -3,9 +3,16 @@ import { apiService } from "../services/apiService";
 import { socketService } from "../services/socketService";
 import { store } from "./index";
 
-export const fetchPlayer = createAsyncThunk("player/fetchPlayer", async () => {
-	return apiService.get("/api/player");
-});
+export const fetchPlayer = createAsyncThunk(
+	"player/fetchPlayer",
+	async (_, { rejectWithValue }) => {
+		try {
+			return await apiService.get("/api/player");
+		} catch (error) {
+			return rejectWithValue(`Error fetching player: ${error.message}`);
+		}
+	}
+);
 
 export const updatePlayer = createAsyncThunk(
 	"player/updatePlayer",
@@ -14,10 +21,25 @@ export const updatePlayer = createAsyncThunk(
 	}
 );
 
-const initialState = await (async () => {
-	const response = await apiService.get("/api/player");
-	return response;
-})();
+const initialState = {
+	id: 1,
+	name: "",
+	level: 1,
+	health: 0,
+	energy: 0,
+	xp: 0,
+	stats: {
+		strength: 5,
+		agility: 5,
+		intelligence: 5,
+		luck: 5,
+	},
+	maxSlots: 16,
+	enabledSlots: 4,
+	inventory: [],
+	error: null,
+	loading: false,
+};
 
 export const playerSlice = createSlice({
 	name: "player",
@@ -135,11 +157,27 @@ export const playerSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(fetchPlayer.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
 			.addCase(fetchPlayer.fulfilled, (state, action) => {
 				return { ...state, ...action.payload };
 			})
+			.addCase(fetchPlayer.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Erro ao buscar jogador.";
+			})
+			.addCase(updatePlayer.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
 			.addCase(updatePlayer.fulfilled, (state, action) => {
 				return { ...state, ...action.payload };
+			})
+			.addCase(updatePlayer.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Erro ao atualizar jogador.";
 			});
 	},
 });

@@ -4,7 +4,7 @@ function Avatar({ username, imageUrl }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     // Avatar placeholder if no image provided
-    const initials = username ? username.charAt(0).toUpperCase() : 'U';
+    const initials = username ? username.charAt(0).toUpperCase() : '?';
 
     return (
         <div className="relative">

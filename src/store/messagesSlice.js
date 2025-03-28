@@ -1,15 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { apiService } from "../services/apiService";
 import { socketService } from "../services/socketService";
 import { store } from "./index";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-
-const initialState = await apiService.get("/api/messages");
-
 export const messagesSlice = createSlice({
 	name: "messages",
-	initialState,
+	initialState: [],
 	reducers: {
 		/**
 		 * Adiciona uma nova mensagem ao chat

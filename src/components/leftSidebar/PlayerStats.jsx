@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import Card from '../ui/Card';
-import { useSelector } from 'react-redux';
+
+import { fetchPlayer } from '../../store/playerSlice';
 
 function PlayerStats() {
-    // Obtendo os dados das estatísticas do jogador do Redux
+    const dispatch = useDispatch();
     const playerStats = useSelector((state) => state.player.stats);
+    const playerLoading = useSelector((state) => state.player.loading);
 
-    // Transformando o objeto em array para manter o padrão de renderização
-    const stats = [
-        { name: 'FOR', value: playerStats.strength },
-        { name: 'AGI', value: playerStats.agility },
-        { name: 'INT', value: playerStats.intelligence },
-        { name: 'SOR', value: playerStats.luck },
-    ];
+    const [stats, setStats] = useState([]);
+
+    useEffect(() => {
+        dispatch(fetchPlayer());
+    }, [dispatch]);
+    // Atualiza os stats quando o jogador é carregado
+    useEffect(() => {
+        const statsData = [
+            { name: 'FOR', value: playerStats.strength },
+            { name: 'AGI', value: playerStats.agility },
+            { name: 'INT', value: playerStats.intelligence },
+            { name: 'LCK', value: playerStats.luck },
+        ];
+        setStats(statsData);
+    }, [playerStats]);
+
+    // Verifica se o jogador está carregando
+    if (!playerLoading) {
+        return (
+            <Card title="Estatísticas">
+                <div className="animate-pulse grid grid-cols-4 gap-3">
+                    {Array.from({ length: 4 }, () => ({
+                        name: `0`,
+                        value: 0,
+                    })).map((stat, index) => (
+                        <div key={index} className="flex flex-col">
+                            <span className="text-sm bg-neutral-700 rounded text-transparent">{stat.name}</span>
+                            <span className="text-sm bg-neutral-700 rounded font-bold mt-2 text-transparent">{stat.value}</span>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <Card title="Estatísticas">

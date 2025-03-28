@@ -5,53 +5,43 @@ import {
 } from "@reduxjs/toolkit";
 import { apiService } from "../services/apiService";
 
-export const fetchPages = createAsyncThunk("pages/fetchPages", async () => {
-	return apiService.get("/api/pages");
-});
+// Thunk para buscar páginas da API
+export const fetchPages = createAsyncThunk(
+	"pages/fetchPages",
+	async (_, { rejectWithValue }) => {
+		try {
+			return await apiService.get("/api/pages");
+		} catch (error) {
+			return rejectWithValue(`Error fetching pages: ${error.message}`);
+		}
+	}
+);
 
-const pagesData = await apiService.get("/api/pages");
-
+// Estado inicial vazio
 const initialState = {
-	pages: pagesData,
-	activePage: null,
+	pages: [], // Array vazio para representar o estado inicial
+	activePage: null, // Nenhuma página ativa inicialmente
+	error: null, // Para armazenar mensagens de erro, se necessário
+	loading: false, // Para indicar o estado de carregamento
 };
 
 export const pagesSlice = createSlice({
 	name: "pages",
 	initialState,
 	reducers: {
-		/**
-		 * Define a página ativa pelo ID
-		 * @param {string} action.payload - ID da página para ativar
-		 */
 		setActivePage: (state, action) => {
-			// Se a página já estiver ativa, desativa
 			if (state.activePage === action.payload) {
 				state.activePage = null;
 			} else {
 				state.activePage = action.payload;
 			}
 		},
-
-		/**
-		 * Limpa a seleção de página ativa
-		 */
 		clearActivePage: (state) => {
 			state.activePage = null;
 		},
-
-		/**
-		 * Adiciona uma nova página ao sistema
-		 * @param {Object} action.payload - Objeto de página a ser adicionado
-		 */
 		addPage: (state, action) => {
 			state.pages.push(action.payload);
 		},
-
-		/**
-		 * Remove uma página pelo ID
-		 * @param {string} action.payload - ID da página a ser removida
-		 */
 		removePage: (state, action) => {
 			state.pages = state.pages.filter(
 				(page) => page.id !== action.payload
@@ -60,11 +50,6 @@ export const pagesSlice = createSlice({
 				state.activePage = null;
 			}
 		},
-
-		/**
-		 * Atualiza propriedades de uma página existente
-		 * @param {Object} action.payload - Objeto com id e propriedades a atualizar
-		 */
 		updatePage: (state, action) => {
 			const { id, ...updates } = action.payload;
 			const page = state.pages.find((p) => p.id === id);
@@ -74,9 +59,19 @@ export const pagesSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchPages.fulfilled, (state, action) => {
-			state.pages = action.payload;
-		});
+		builder
+			.addCase(fetchPages.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchPages.fulfilled, (state, action) => {
+				state.pages = action.payload;
+				state.loading = false;
+			})
+			.addCase(fetchPages.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Erro ao buscar páginas.";
+			});
 	},
 });
 
