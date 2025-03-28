@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Card from '../ui/Card';
 
 import { fetchPlayer } from '../../store/playerSlice';
+import AnimatedCounter from '../ui/AnimatedCounter';
 
 function PlayerStats() {
     const dispatch = useDispatch();
@@ -11,6 +12,13 @@ function PlayerStats() {
     const playerLoading = useSelector((state) => state.player.loading);
 
     const [stats, setStats] = useState([]);
+
+    const calculatedDuration = (value, maxValue) => {
+        const minDuration = 500;
+        const maxDuration = 3000;
+        const duration = Math.min(Math.max((value / maxValue) * 2000, minDuration), maxDuration);
+        return duration;
+    };
 
     useEffect(() => {
         dispatch(fetchPlayer());
@@ -51,7 +59,9 @@ function PlayerStats() {
                 {stats.map((stat, index) => (
                     <div key={index} className="flex flex-col">
                         <span className="text-sm text-neutral-400">{stat.name}</span>
-                        <span className="text-lg font-bold">{stat.value}</span>
+                        <span className="text-lg font-bold">
+                            <AnimatedCounter value={stat.value} duration={calculatedDuration(stat.value, 100)} />
+                        </span>
                     </div>
                 ))}
             </div>
