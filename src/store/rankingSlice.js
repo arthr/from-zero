@@ -12,7 +12,11 @@ export const fetchRanking = createAsyncThunk(
 	}
 );
 
-const initialState = [];
+const initialState = {
+	data: [],
+	error: null,
+	loading: false,
+};
 
 export const rankingSlice = createSlice({
 	name: "ranking",
@@ -26,7 +30,7 @@ export const rankingSlice = createSlice({
 		 */
 		updateScore: (state, action) => {
 			const { id, score } = action.payload;
-			const player = state.find((p) => p.id === id);
+			const player = state.data.find((p) => p.id === id);
 			if (player) {
 				player.score = score;
 			}
@@ -37,7 +41,7 @@ export const rankingSlice = createSlice({
 		 * @param {Object} action.payload - Objeto contendo dados do novo jogador
 		 */
 		addPlayer: (state, action) => {
-			state.push(action.payload);
+			state.data.push(action.payload);
 		},
 
 		/**
@@ -45,9 +49,11 @@ export const rankingSlice = createSlice({
 		 * @param {number} action.payload - ID do jogador a ser removido
 		 */
 		removePlayer: (state, action) => {
-			const playerIndex = state.findIndex((p) => p.id === action.payload);
+			const playerIndex = state.data.findIndex(
+				(p) => p.id === action.payload
+			);
 			if (playerIndex !== -1) {
-				state.splice(playerIndex, 1);
+				state.data.splice(playerIndex, 1);
 			}
 		},
 
@@ -59,7 +65,7 @@ export const rankingSlice = createSlice({
 		 */
 		updatePlayerName: (state, action) => {
 			const { id, name } = action.payload;
-			const player = state.find((p) => p.id === id);
+			const player = state.data.find((p) => p.id === id);
 			if (player) {
 				player.name = name;
 			}
@@ -73,7 +79,7 @@ export const rankingSlice = createSlice({
 		 */
 		updatePlayerAvatar: (state, action) => {
 			const { id, avatar } = action.payload;
-			const player = state.find((p) => p.id === id);
+			const player = state.data.find((p) => p.id === id);
 			if (player) {
 				player.avatar = avatar;
 			}
@@ -84,7 +90,7 @@ export const rankingSlice = createSlice({
 		 * @param {number} action.payload - ID do jogador que é o usuário atual
 		 */
 		setCurrentUser: (state, action) => {
-			state.forEach((player) => {
+			state.data.forEach((player) => {
 				player.isCurrentUser = player.id === action.payload;
 			});
 		},
@@ -96,7 +102,7 @@ export const rankingSlice = createSlice({
 		 */
 		updatePlayerAttributes: (state, action) => {
 			const { id, ...attributes } = action.payload;
-			const player = state.find((p) => p.id === id);
+			const player = state.data.find((p) => p.id === id);
 			if (player) {
 				Object.assign(player, attributes);
 			}
@@ -115,14 +121,25 @@ export const rankingSlice = createSlice({
 		 * @param {number} action.payload - Número de jogadores a serem retornados
 		 */
 		getTopPlayers: {
-			reducer: (state) => state,
+			reducer: (state) => state.data,
 			prepare: (count = 10) => ({ payload: count }),
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchRanking.fulfilled, (state, action) => {
-			return action.payload;
-		});
+		builder
+			.addCase(fetchRanking.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchRanking.fulfilled, (state, action) => {
+				state.loading = false;
+				state.data = action.payload;
+				Object.assign(state, action.payload);
+			})
+			.addCase(fetchRanking.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Error fetching ranking.";
+			});
 	},
 });
 

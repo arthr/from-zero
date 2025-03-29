@@ -1,17 +1,35 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { apiService } from "../services/apiService";
 import { socketService } from "../services/socketService";
 import { store } from "./index";
 
+export const fetchMessages = createAsyncThunk(
+	"messages/fetchMessages",
+	async (_, { rejectWithValue }) => {
+		try {
+			return await apiService.get("/api/messages");
+		} catch (error) {
+			return rejectWithValue(`Error fetching messages: ${error.message}`);
+		}
+	}
+);
+
+const initialState = {
+	data: [],
+	error: null,
+	loading: false,
+};
+
 export const messagesSlice = createSlice({
 	name: "messages",
-	initialState: [],
+	initialState,
 	reducers: {
 		/**
 		 * Adiciona uma nova mensagem ao chat
 		 * @param {Object} action.payload - Objeto contendo os dados da mensagem
 		 */
 		addMessage: (state, action) => {
-			state.push(action.payload);
+			state.data.push(action.payload);
 		},
 
 		/**
@@ -19,11 +37,11 @@ export const messagesSlice = createSlice({
 		 * @param {number} action.payload - ID da mensagem a ser removida
 		 */
 		removeMessage: (state, action) => {
-			const messageIndex = state.findIndex(
+			const messageIndex = state.data.findIndex(
 				(message) => message.id === action.payload
 			);
 			if (messageIndex !== -1) {
-				state.splice(messageIndex, 1);
+				state.data.splice(messageIndex, 1);
 			}
 		},
 
@@ -35,7 +53,7 @@ export const messagesSlice = createSlice({
 		 */
 		editMessage: (state, action) => {
 			const { id, text } = action.payload;
-			const message = state.find((message) => message.id === id);
+			const message = state.data.find((message) => message.id === id);
 			if (message) {
 				message.text = text;
 			}
@@ -47,6 +65,23 @@ export const messagesSlice = createSlice({
 		clearMessages: () => {
 			return [];
 		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchMessages.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchMessages.fulfilled, (state, action) => {
+				state.loading = false;
+				state.error = null;
+				state.data = action.payload;
+				Object.assign(state, action.payload);
+			})
+			.addCase(fetchMessages.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Erro ao buscar mensagens.";
+			});
 	},
 });
 

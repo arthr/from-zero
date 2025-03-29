@@ -23,7 +23,7 @@ function WavyPlane(props) {
     return (
         <mesh {...props} ref={ref} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[10, 10, 32, 32]} />
-            <meshStandardMaterial color="#0f172a" wireframe />
+            <meshStandardMaterial color="#5ee9b5" wireframe />
         </mesh>
     );
 }

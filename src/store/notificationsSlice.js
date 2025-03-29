@@ -18,12 +18,22 @@ export const fetchNotifications = createAsyncThunk(
 
 export const createNotification = createAsyncThunk(
 	"notifications/createNotification",
-	async (notification) => {
-		return apiService.post("/api/notifications", notification);
+	async (notification, { rejectWithValue }) => {
+		try {
+			return apiService.post("/api/notifications", notification);
+		} catch (error) {
+			return rejectWithValue(
+				`Error creating notification: ${error.message}`
+			);
+		}
 	}
 );
 
-const initialState = [];
+const initialState = {
+	data: [],
+	error: null,
+	loading: false,
+};
 
 export const notificationsSlice = createSlice({
 	name: "notifications",
@@ -34,7 +44,7 @@ export const notificationsSlice = createSlice({
 		 * @param {Object} action.payload - Objeto contendo os dados da notificação
 		 */
 		addNotification: (state, action) => {
-			state.push(action.payload);
+			state.data.push(action.payload);
 		},
 
 		/**
@@ -42,11 +52,11 @@ export const notificationsSlice = createSlice({
 		 * @param {number} action.payload - ID da notificação a ser removida
 		 */
 		removeNotification: (state, action) => {
-			const notificationIndex = state.findIndex(
+			const notificationIndex = state.data.findIndex(
 				(notification) => notification.id === action.payload
 			);
 			if (notificationIndex !== -1) {
-				state.splice(notificationIndex, 1);
+				state.data.splice(notificationIndex, 1);
 			}
 		},
 
@@ -55,7 +65,7 @@ export const notificationsSlice = createSlice({
 		 * @param {number} action.payload - ID da notificação a ser marcada
 		 */
 		markAsRead: (state, action) => {
-			const notification = state.find(
+			const notification = state.data.find(
 				(notification) => notification.id === action.payload
 			);
 			if (notification) {
@@ -66,26 +76,43 @@ export const notificationsSlice = createSlice({
 		/**
 		 * Limpa todas as notificações
 		 */
-		clearNotifications: () => {
-			return [];
+		clearNotifications: (state) => {
+			state.date = [];
 		},
 
 		/**
 		 * Marca todas as notificações como lidas
 		 */
 		markAllAsRead: (state) => {
-			state.forEach((notification) => {
+			state.data.forEach((notification) => {
 				notification.read = true;
 			});
 		},
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(fetchNotifications.pending, (state) => {
+				state.loading = true;
+			})
 			.addCase(fetchNotifications.fulfilled, (state, action) => {
-				return action.payload;
+				state.data = action.payload;
+				state.loading = false;
+				state.error = null;
+				Object.assign(state, action.payload);
+			})
+			.addCase(fetchNotifications.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(createNotification.pending, (state) => {
+				state.loading = true;
 			})
 			.addCase(createNotification.fulfilled, (state, action) => {
 				state.push(action.payload);
+			})
+			.addCase(createNotification.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
 			});
 	},
 });

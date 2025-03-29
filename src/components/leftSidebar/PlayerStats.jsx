@@ -49,7 +49,7 @@ function PlayerStats() {
 
     return (
         <Card title="Estatísticas">
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-3 text-center">
                 {stats.map((stat, index) => (
                     <div key={index} className="flex flex-col">
                         <span className="text-sm text-neutral-400">{stat.name}</span>
