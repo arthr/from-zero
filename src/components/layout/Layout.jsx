@@ -6,22 +6,26 @@ import GameContainer from '../game/GameContainer';
 import RightSidebar from '../rightSidebar/RightSidebar';
 import TerminalOverlay from './TerminalOverlay';
 import PageContent from '../ui/PageContent';
-import { selectActivePage } from '../../store/pagesSlice';
+import {
+    selectActivePage,
+    selectOrderedPages,
+    selectActivePageStates
+} from '../../store/pagesSlice';
 
 function Layout() {
-    // Usar o seletor para obter a página ativa
     const activePage = useSelector(selectActivePage);
+    const pages = useSelector(selectOrderedPages);
+    const activePageStates = useSelector(selectActivePageStates);
+
 
     return (
         <div className="min-h-screen bg-neutral-900 text-white flex flex-col">
-            <Navbar />
+            <Navbar pages={pages} activePageStates={activePageStates} player={{ name: "Player1" }} />
 
             {/* Main Content */}
             <div className="flex flex-1 flex-col md:flex-row p-4 gap-4 relative">
-                {/* Terminal Overlay - renderiza o conteúdo da página ativa */}
                 <TerminalOverlay
-                    isVisible={!!activePage}
-                    content={activePage ? <PageContent content={activePage.content} /> : null}
+                    activePageContent={activePage ? <PageContent /> : null}
                 />
 
                 {/* Left Sidebar - collapses on mobile */}

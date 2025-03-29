@@ -14,7 +14,11 @@ export const fetchActivities = createAsyncThunk(
 	}
 );
 
-const initialState = [];
+const initialState = {
+	data: [],
+	error: null,
+	loading: false,
+};
 
 export const activitiesSlice = createSlice({
 	name: "activities",
@@ -25,7 +29,7 @@ export const activitiesSlice = createSlice({
 		 * @param {Object} action.payload - Objeto contendo os dados da atividade
 		 */
 		addActivity: (state, action) => {
-			state.push(action.payload);
+			state.data.push(action.payload);
 		},
 
 		/**
@@ -33,11 +37,11 @@ export const activitiesSlice = createSlice({
 		 * @param {number} action.payload - ID da atividade a ser removida
 		 */
 		removeActivity: (state, action) => {
-			const activityIndex = state.findIndex(
+			const activityIndex = state.data.findIndex(
 				(activity) => activity.id === action.payload
 			);
 			if (activityIndex !== -1) {
-				state.splice(activityIndex, 1);
+				state.data.splice(activityIndex, 1);
 			}
 		},
 
@@ -48,7 +52,7 @@ export const activitiesSlice = createSlice({
 		 */
 		updateActivity: (state, action) => {
 			const { id, ...updates } = action.payload;
-			const activity = state.find((activity) => activity.id === id);
+			const activity = state.data.find((activity) => activity.id === id);
 			if (activity) {
 				Object.assign(activity, updates);
 			}
@@ -62,9 +66,18 @@ export const activitiesSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchActivities.fulfilled, (state, action) => {
-			return action.payload;
-		});
+		builder
+			.addCase(fetchActivities.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchActivities.fulfilled, (state, action) => {
+				return action.payload;
+			})
+			.addCase(fetchActivities.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || "Error fetching activities.";
+			});
 	},
 });
 

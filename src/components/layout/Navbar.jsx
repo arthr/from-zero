@@ -1,29 +1,22 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-    selectOrderedPages,
-    setActivePage,
-    selectActivePageStates
-} from '../../store/pagesSlice';
+import { useDispatch } from 'react-redux';
+import { fetchPages, setActivePage } from '../../store/pagesSlice';
 import Avatar from '../ui/Avatar';
+import { useEffect } from 'react';
 
-function Navbar() {
-    const player = useSelector((state) => state.player);
-    const [menuOpen, setMenuOpen] = useState(false);
+function Navbar({ pages, activePageStates, player }) {
     const dispatch = useDispatch();
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    // Obter as páginas do store e ordenar usando o seletor memoizado
-    const pages = useSelector(selectOrderedPages);
-
-    // Obter o estado de todas as páginas ativas usando o seletor memoizado
-    const activePageStates = useSelector(selectActivePageStates);
+    useEffect(() => {
+        dispatch(fetchPages());
+    }, [dispatch]);
 
     const handleNavClick = (pageId) => {
-        dispatch(setActivePage(pageId));
-        if (menuOpen) setMenuOpen(false);
+        dispatch(setActivePage(pageId)); // Define a página ativa
+        if (menuOpen) setMenuOpen(false); // Fecha o menu mobile, se estiver aberto
     };
 
-    // Helper para gerar classes condicionais dos botões
     const getButtonClasses = (pageId) => {
         return activePageStates[pageId]
             ? "text-emerald-400 transition"

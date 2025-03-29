@@ -1,8 +1,15 @@
 import React from 'react';
 import DOMPurify from 'dompurify';
+import { useSelector } from 'react-redux';
 
-function PageContent({ content }) {
-    if (!content) return null;
+import {
+    selectActivePage
+} from '../../store/pagesSlice';
+
+function PageContent() {
+    const activePage = useSelector(selectActivePage);
+
+    const content = activePage ? activePage.content : null;
 
     const containsHTML = (text) => /<\/?[a-z][\s\S]*>/i.test(text);
 
